@@ -33,9 +33,11 @@ def maghribRun(): # Akşam
 def ishaRun(): # Yatsı
     print("Yatsı vakti! ishaRun() fonksiyonu çalıştırılıyor... play yatsi.mp3")
     play_mp3('./yatsi.mp3')
+def selaRun(): # Sela
+    print("Sela vakti! selaRun() fonksiyonu çalıştırılıyor... play sela.mp3")
+    play_mp3('./sela.mp3')
 
-
-# Bugünün ezan saatlerini JSON verisinden alacak fonksiyon
+# Bugünün ezan saatlerini ve gün adını JSON verisinden alacak fonksiyon
 def get_today_timings():
     # Bugünün tarihini formatlıyoruz
     today = datetime.datetime.now(local_timezone).strftime("%d-%m-%Y")
@@ -43,16 +45,14 @@ def get_today_timings():
     # Bugünün ezan vakitlerini JSON'dan buluyoruz
     for day_data in ezan_data:
         if day_data['date']['gregorian']['date'] == today:
-            return day_data['timings']
-    return None
+            return day_data['timings'], day_data['date']['gregorian']['weekday']['en']
+    return None, None
 
 # Her vakit için planlama fonksiyonunu yazıyoruz
 def schedule_prayer_times():
-    timings = get_today_timings()  # Bugünün ezan vakitlerini al
-
+    timings, weekday = get_today_timings()  # Bugünün ezan vakitlerini ve haftanın gününü al
     if timings:
         now = datetime.datetime.now(local_timezone)
-        print("Now =>",now)
         # Her bir ezan vakti için benzer işlemleri yapacağız:
         def schedule_time(prayer_name, prayer_time, function):
             prayer_time = prayer_time.replace(' (CET)', '').replace(' (CEST)', '')
@@ -70,6 +70,16 @@ def schedule_prayer_times():
         schedule_time('Maghrib', timings['Maghrib'], maghribRun)
         schedule_time('Isha', timings['Isha'], ishaRun)
 
+        # Eğer gün Perşembe ise, Isha'dan 30 dakika önce selaRun fonksiyonunu planla
+        if weekday == "Thursday":
+            isha_time = timings['Isha'].replace(' (CET)', '').replace(' (CEST)', '')
+            isha_time = datetime.datetime.strptime(isha_time, '%H:%M')
+            isha_time = isha_time.replace(year=now.year, month=now.month, day=now.day)
+            isha_time = local_timezone.localize(isha_time)
+            sela_time = isha_time - datetime.timedelta(minutes=30)  # Isha'dan 30 dakika önce
+            sela_time_str = sela_time.strftime('%H:%M')
+            schedule.every().day.at(sela_time_str).do(selaRun)
+            print(f"Sela vakti {sela_time_str} saatinde planlandı (Perşembe).")
 # Yeni gün geldiğinde planlamaları sıfırlayan fonksiyon
 def clear_schedule_for_new_day():
     schedule.clear()
@@ -90,6 +100,3 @@ def run_scheduler():
 
 if __name__ == "__main__":
     run_scheduler()
-
-
- #test için 17-09-2024 tarihi manupule edildi
