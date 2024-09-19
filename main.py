@@ -5,9 +5,10 @@ from pytz import timezone
 import schedule
 import pygame  # mp3 oynatmak için pygame kütüphanesi
 
+
+pygame.mixer.init()
 pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=1024)
 pygame.mixer.music.set_volume(0.5)  # Ses seviyesi %50'ye ayarlanıyor
-pygame.mixer.init()
 # JSON dosyasından ezan vakitlerini yükleme
 with open('duisburg2024.json') as f:
     ezan_data = json.load(f)
