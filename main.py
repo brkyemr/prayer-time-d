@@ -6,6 +6,7 @@ import schedule
 import pygame  # mp3 oynatmak için pygame kütüphanesi
 
 pygame.mixer.init()
+pygame.mixer.music.set_volume(0.5)  # 0.0 ile 1.0 arasında ses seviyesi
 # JSON dosyasından ezan vakitlerini yükleme
 with open('duisburg2024.json') as f:
     ezan_data = json.load(f)
