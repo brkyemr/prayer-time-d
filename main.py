@@ -7,11 +7,11 @@ import pygame  # mp3 oynatmak için pygame kütüphanesi
 
 pygame.mixer.init()
 # JSON dosyasından ezan vakitlerini yükleme
-with open('ezan_times_2024_2030.json') as f:
+with open('duisburg2024.json') as f:
     ezan_data = json.load(f)
 
 # Zaman dilimi (CET/CEST)
-local_timezone = timezone('Europe/Berlin')
+local_timezone = timezone('Europe/Istanbul')  # Berlin'den İstanbul'a güncelledim
 
 def play_mp3(file):
     """mp3 dosyasını çalmak için fonksiyon"""
@@ -40,22 +40,22 @@ def selaRun(): # Sela
 # Bugünün ezan saatlerini ve gün adını JSON verisinden alacak fonksiyon
 def get_today_timings():
     # Bugünün tarihini formatlıyoruz
-    today = datetime.datetime.now(local_timezone).strftime("%d-%m-%Y")
+    today = datetime.datetime.now(local_timezone).strftime("%d.%m.%Y")
     
     # Bugünün ezan vakitlerini JSON'dan buluyoruz
     for day_data in ezan_data:
-        if day_data['date']['gregorian']['date'] == today:
-            return day_data['timings'], day_data['date']['gregorian']['weekday']['en']
+        if day_data['gregorianDateShort'] == today:
+            return day_data, day_data['gregorianDateLong']
     return None, None
 
 # Her vakit için planlama fonksiyonunu yazıyoruz
 def schedule_prayer_times():
-    timings, weekday = get_today_timings()  # Bugünün ezan vakitlerini ve haftanın gününü al
-    if timings:
+    today_data, weekday = get_today_timings()  # Bugünün ezan vakitlerini ve haftanın gününü al
+    if today_data:
+        timings = today_data  # Tüm vakit bilgileri JSON'dan geldiği gibi
         now = datetime.datetime.now(local_timezone)
         # Her bir ezan vakti için benzer işlemleri yapacağız:
         def schedule_time(prayer_name, prayer_time, function):
-            prayer_time = prayer_time.replace(' (CET)', '').replace(' (CEST)', '')
             prayer_time = datetime.datetime.strptime(prayer_time, '%H:%M')
             prayer_time = prayer_time.replace(year=now.year, month=now.month, day=now.day)
             prayer_time = local_timezone.localize(prayer_time)
@@ -64,15 +64,14 @@ def schedule_prayer_times():
             print(f"{prayer_name} vakti {schedule_time_str} saatinde planlandı.")
 
         # Tüm vakitler için planlama yapıyoruz
-        schedule_time('Fajr', timings['Fajr'], fajrRun)
-        schedule_time('Dhuhr', timings['Dhuhr'], dhuhrRun)
-        schedule_time('Asr', timings['Asr'], asrRun)
-        schedule_time('Maghrib', timings['Maghrib'], maghribRun)
-        schedule_time('Isha', timings['Isha'], ishaRun)
-
+        schedule_time('Fajr', timings['fajr'], fajrRun)
+        schedule_time('Dhuhr', timings['dhuhr'], dhuhrRun)
+        schedule_time('Asr', timings['asr'], asrRun)
+        schedule_time('Maghrib', timings['maghrib'], maghribRun)
+        schedule_time('Isha', timings['isha'], ishaRun)
         # Eğer gün Perşembe ise, Isha'dan 30 dakika önce selaRun fonksiyonunu planla
-        if weekday == "Thursday":
-            isha_time = timings['Isha'].replace(' (CET)', '').replace(' (CEST)', '')
+        if "Perşembe" in weekday:
+            isha_time = timings['isha']
             isha_time = datetime.datetime.strptime(isha_time, '%H:%M')
             isha_time = isha_time.replace(year=now.year, month=now.month, day=now.day)
             isha_time = local_timezone.localize(isha_time)
