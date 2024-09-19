@@ -5,6 +5,8 @@ from pytz import timezone
 import schedule
 import pygame  # mp3 oynatmak için pygame kütüphanesi
 
+pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=1024)
+pygame.mixer.music.set_volume(0.5)  # Ses seviyesi %50'ye ayarlanıyor
 pygame.mixer.init()
 # JSON dosyasından ezan vakitlerini yükleme
 with open('duisburg2024.json') as f:
@@ -17,8 +19,6 @@ def play_mp3(file):
     """mp3 dosyasını çalmak için fonksiyon"""
     pygame.mixer.music.load(file)
     pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy():
-        pygame.time.Clock().tick(10)
 def fajrRun(): # İmsak
     print("İmsak vakti! fajrRun() fonksiyonu çalıştırılıyor... play sabah.mp3")
     play_mp3('./sabah.mp3')
