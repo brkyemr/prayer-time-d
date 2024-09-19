@@ -17,7 +17,8 @@ def play_mp3(file):
     """mp3 dosyasını çalmak için fonksiyon"""
     pygame.mixer.music.load(file)
     pygame.mixer.music.play()
-
+    while pygame.mixer.music.get_busy():
+        pygame.time.Clock().tick(10)
 def fajrRun(): # İmsak
     print("İmsak vakti! fajrRun() fonksiyonu çalıştırılıyor... play sabah.mp3")
     play_mp3('./sabah.mp3')
