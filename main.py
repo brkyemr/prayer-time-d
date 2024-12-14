@@ -71,7 +71,7 @@ def schedule_prayer_times():
         schedule_time('Maghrib', timings['maghrib'], maghribRun)
         schedule_time('Isha', timings['isha'], ishaRun)
         # Eğer gün Perşembe ise, Isha'dan 30 dakika önce selaRun fonksiyonunu planla
-        if "Perşembe" in weekday:
+"""         if "Perşembe" in weekday:
             isha_time = timings['isha']
             isha_time = datetime.datetime.strptime(isha_time, '%H:%M')
             isha_time = isha_time.replace(year=now.year, month=now.month, day=now.day)
@@ -79,7 +79,7 @@ def schedule_prayer_times():
             sela_time = isha_time - datetime.timedelta(minutes=30)  # Isha'dan 30 dakika önce
             sela_time_str = sela_time.strftime('%H:%M')
             schedule.every().day.at(sela_time_str).do(selaRun)
-            print(f"Sela vakti {sela_time_str} saatinde planlandı (Perşembe).")
+            print(f"Sela vakti {sela_time_str} saatinde planlandı (Perşembe).") """
 # Yeni gün geldiğinde planlamaları sıfırlayan fonksiyon
 def clear_schedule_for_new_day():
     schedule.clear()
