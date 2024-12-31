@@ -9,7 +9,7 @@ import pygame  # mp3 oynatmak için pygame kütüphanesi
 pygame.mixer.init()
 
 # JSON dosyasından ezan vakitlerini yükleme
-with open('duisburg2024.json') as f:
+with open('duisburg2025.json') as f:
     ezan_data = json.load(f)
 
 # Zaman dilimi (CET/CEST)
