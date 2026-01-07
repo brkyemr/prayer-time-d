@@ -51,7 +51,7 @@ sudo npm install -g pm2
 ### 4. Proje Kurulumu
 ```bash
 # Proje dizinine git
-cd /home/pi/prayer-time-d
+cd /home/ezan/Desktop/prayer-time-d
 
 # Python virtual environment oluştur
 python3 -m venv venv
@@ -217,7 +217,7 @@ sudo npm update -g pm2
 ### Yedekleme
 ```bash
 # Proje dizinini yedekle
-tar -czf prayer-time-backup-$(date +%Y%m%d).tar.gz /home/pi/prayer-time-d
+tar -czf prayer-time-backup-$(date +%Y%m%d).tar.gz /home/ezan/Desktop/prayer-time-d
 
 # PM2 konfigürasyonunu yedekle
 pm2 save
